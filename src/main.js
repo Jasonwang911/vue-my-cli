@@ -2,7 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import Mint from 'mint-ui';
-import 'mint-ui/lib/style.css'
+require('@/config/rem')
 import store from '@/store/index'
 import App from './App'
 import router from './router'
@@ -11,7 +11,11 @@ import { fetch, post } from '@/axios/api'
 
 Vue.config.productionTip = false
 
+import 'mint-ui/lib/style.css'
+
 Vue.use(Mint);
+
+require('@/mock/ranklist.mock.js')
 
 require('@/styles/index.scss')
 

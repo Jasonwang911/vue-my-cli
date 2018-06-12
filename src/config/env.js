@@ -11,7 +11,7 @@ let routerMode = '';
 let baseImgPath;
 
 if (process.env.NODE_ENV == 'development') {
-    baseUrl = '/api';
+    baseUrl = '';
     baseImgPath = '';
 } else {
     baseUrl = 'https://test-m.yingujr.com';

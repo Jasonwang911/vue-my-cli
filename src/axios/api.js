@@ -10,6 +10,7 @@ import $qs from 'qs'
 import {
   baseUrl
 } from '@/config/env'
+import { Indicator } from 'mint-ui';
 
 // axios.defaults.headers.post['Content-Type'] = 'Content-Type: application/json'
 // baseURL配置
@@ -28,14 +29,20 @@ var server = axios.create({
 
 // 请求拦截器
 server.interceptors.request.use(function (config) {
+  Indicator.open({
+    text: '加载中...',
+    spinnerType: 'triple-bounce'
+  });
   return config;
 }, function (error) {
   return Promise.reject(error);
 })
 // 响应拦截器
 server.interceptors.response.use(function (response) {
+  Indicator.close();
   return response
 }, function (error) {
+  Indicator.close();
   return Promise.reject(error)
 })
 
