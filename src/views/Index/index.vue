@@ -1,5 +1,8 @@
 <template>
   <div class="index">
+
+    <div>这是release分支新增的东西</div>
+
     <mt-loadmore :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false" ref="loadmore">
 
       <div class="list-cell" v-for="(value, index) in backMsg" :key="index">
