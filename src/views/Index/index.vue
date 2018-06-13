@@ -1,11 +1,14 @@
 <template>
   <div class="index">
 
-    <div>这是release分支新增的东西</div>
-    <div>release不修改</div>
-
-    <mt-loadmore :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false" ref="loadmore">
-
+    <mt-loadmore 
+    class="scroller"
+    :bottom-method="loadBottom" 
+    :bottom-all-loaded="allLoaded" 
+    :auto-fill="false" 
+    @bottom-status-change="handleBottomChange"
+    ref="loadmore">
+    
       <div class="list-cell" v-for="(value, index) in backMsg" :key="index">
         <div class="top clearfix">
             <img class="fl" :src="value.imgUrl" alt="">
@@ -24,7 +27,13 @@
         <div>{{value.info}}</div>
       </div>
 
-    </mt-loadmore>
+      <div slot="bottom" class="mint-loadmore-bottom">
+        <span v-show="bottomStatus !== 'loading'" :class="{ 'rotate': bottomStatus === 'drop' }">松手开始加载</span>
+        <span v-show="bottomStatus === 'loading'">正在加载中</span>
+      </div>
+
+  </mt-loadmore>
+
   </div>
 </template>
 
@@ -36,65 +45,65 @@ export default {
     return {
       backMsg: [],
       allLoaded: false,
+      bottomStatus: ''
     };
   },
   created() {
-    this.init();
-  },
-  methods: {
-    init() {
-      this.$post("/ranklist")
+    this.$post("/ranklist")
       .then(res => {
-        console.log(res.rankList);
         this.backMsg = res.rankList;
       })
       .catch(err => {
         console.log("err", err);
       });
-    },
-    loadTop() {
-      // 加载更多数据
-      this.init();
-      this.$refs.loadmore.onTopLoaded();
-    },
-    loadBottom() {
+  },
+  methods: {
+    loadBottom: function() {
       console.log('aaaa')
       // 加载更多数据
       this.$post("/ranklist")
       .then(res => {
         console.log(res);
-        this.backMsg = this.backMsg.push(res.rankList);
+        this.backMsg = this.backMsg.concat(res.rankList);
+        this.$refs.loadmore.onBottomLoaded();
       })
       .catch(err => {
         console.log("err", err);
       });
-      // this.allLoaded = true;// 若数据已全部获取完毕
-      this.$refs.loadmore.onBottomLoaded();
-    }
+    },
+    handleBottomChange(status) {
+      this.bottomStatus = status;
+    },
   }
 };
 </script>
 
 <style scoped lang="scss">
 .index {
-  .list-cell {
-    width: 100%;
-    border-bottom: 1px solid #ccc;
-    font-size: 0.24rem;
-    overflow:scroll;
-    .top{
+  overflow: scroll;
+  .scroller{
+    // position: relative;
+    // height: 10rem;
+    .list-cell {
       width: 100%;
-      img {
-        width: 1rem;
-        height: 1rem;
-        border-radius: 100%;
-        margin: 0.2rem;
+      border-bottom: 1px solid #ccc;
+      font-size: 0.24rem;
+      overflow:scroll;
+      .top{
+        width: 100%;
+        img {
+          width: 1rem;
+          height: 1rem;
+          border-radius: 100%;
+          margin: 0.2rem;
+        }
+        .middle {
+          width: 5rem;
+        }
       }
-      .middle {
-        width: 5rem;
-      }
-    }
 
+    }
   }
+  
 }
 </style>

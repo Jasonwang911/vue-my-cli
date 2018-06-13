@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import Mint from 'mint-ui';
 require('@/config/rem')
+import VueScroller from 'vue-scroller'
 import store from '@/store/index'
 import App from './App'
 import router from './router'
@@ -13,6 +14,7 @@ Vue.config.productionTip = false
 
 import 'mint-ui/lib/style.css'
 
+Vue.use(VueScroller)
 Vue.use(Mint);
 
 require('@/mock/ranklist.mock.js')
