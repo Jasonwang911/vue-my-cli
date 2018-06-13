@@ -2,7 +2,7 @@
   <div class="index">
 
     <div>这是release分支新增的东西</div>
-    <div>这是release分支第二次提交的东西</div>
+    <div>release分支也修改同一个地方，你猜会不会有冲突</div>
 
     <mt-loadmore :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false" ref="loadmore">
 
@@ -94,7 +94,7 @@ export default {
         width: 5rem;
       }
     }
-    
+
   }
 }
 </style>
