@@ -6,8 +6,6 @@ require('@/config/rem')
 import store from '@/store/index'
 import App from './App'
 import router from './router'
-// axios封装引入
-import { fetch, post } from '@/axios/api'
 
 Vue.config.productionTip = false
 
@@ -18,11 +16,6 @@ Vue.use(Mint);
 require('@/mock/ranklist.mock.js')
 
 require('@/styles/index.scss')
-
-// post 请求使用 this.$post
-Vue.prototype.$post = post;
-// get 请求使用 this.$get
-Vue.prototype.$get = fetch;
 
 /* eslint-disable no-new */
 new Vue({

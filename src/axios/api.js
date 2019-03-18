@@ -1,88 +1,53 @@
-/*
- *   axios基本配置、请求拦截器、相应拦截器
- *
- */
-// axios 引入
 import axios from 'axios'
-// qs 
-import $qs from 'qs'
-// baseUrl引入： 
-import {
-  baseUrl
-} from '@/config/env'
-import { Indicator } from 'mint-ui';
+import $store from '@/store/index'
+import { Toast } from 'mint-ui';
+// baseUrl引入：
+import { baseUrl } from '@/config/env'
 
-// axios.defaults.headers.post['Content-Type'] = 'Content-Type: application/json'
-// baseURL配置
-// axios.defaults.baseURL = baseUrl
-
-var server = axios.create({
-  baseURL: baseUrl,
+// create an axios instance
+let baseConfig = {
+  baseURL: baseUrl, // api的base_url
   withCredentials: true,
-  timeout: 10000,
+  timeout: 10000, // request timeout
   headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Type':'application/x-www-form-urlencoded',
     'Accept': 'application/json',
   },
-});
-
-
-// 请求拦截器
-server.interceptors.request.use(function (config) {
-  Indicator.open({
-    text: '加载中...',
-    spinnerType: 'triple-bounce'
-  });
-  return config;
-}, function (error) {
-  return Promise.reject(error);
-})
-// 响应拦截器
-server.interceptors.response.use(function (response) {
-  Indicator.close();
-  return response
-}, function (error) {
-  Indicator.close();
-  return Promise.reject(error)
-})
-
-
-/*
- *   axios的get请求
- *   @params  url
- *   @params  params
- *   @returns {Promise}
- */
-export function fetch(url, params = {}) {
-  return new Promise((resolve, reject) => {
-    // get 请求
-    server.get(url, {
-        params
-      })
-      .then(response => {
-        resolve(response.data);
-      })
-      .catch((error) => {
-        reject(error);
-      })
-  })
 }
 
-/*
- *   axios的post请求
- *   @params  url
- *   @params  params
- *   @returns {Promise}
- */
-export function post(url, params = {}) {
-  return new Promise((resolve, reject) => {
-    // post请求
-    server.post(url, $qs.stringify(params))
-      .then(response => {
-        resolve(response.data);
-      })
-      .catch((error) => {
-        reject(error);
-      })
-  })
-}
+
+
+const service = axios.create(baseConfig)
+
+// request interceptor
+service.interceptors.request.use(config => {
+  // Do something before request is sent
+  if($store.state.user.token) {
+    config.headers.token = `${$store.state.user.token}`;
+  }
+  return config
+}, error => {
+  // Do something with request error
+  console.log(error) // for debug
+  Promise.reject(error)
+})
+
+// respone interceptor
+service.interceptors.response.use(response => {
+    // 用户登录过期或超时 调取原生方法 原生关闭webview 并跳转到登录
+     if(response.data.code == '1401') {
+        let ua = navigator.userAgent.toLowerCase();
+        if (/iphone|ipad|ipod/.test(ua)) {
+            // ios的webwiew
+        }else if (/android/.test(ua)) {
+            // android的webview
+        }
+     }
+     return response;
+},error => {
+    console.log('err' + error) // for debug
+    Toast(error);
+    return Promise.reject(error)
+})
+
+export default service
